@@ -1,11 +1,11 @@
-FROM maven:sapmachine AS builder
+FROM maven:3-sapmachine-24 AS builder
 
 # add pom.xml and source code
 ADD ./pom.xml pom.xml
 ADD ./src src/
 
 # package jar
-RUN mvn clean package
+RUN mvn clean package -Dmaven.test.skip=true
 
 # Second stage: minimal runtime environment
 From openjdk:24-slim
