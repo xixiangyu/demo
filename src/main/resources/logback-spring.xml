@@ -18,7 +18,7 @@
     <!-- 文件 滚动日志 (all)-->
     <appender name="allLog"  class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 当前日志输出路径、文件名 -->
-        <file>${log.path}/all.log</file>
+        <file>${log.path}/all-${HOSTNAME}.log</file>
         <!--日志输出格式-->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
@@ -38,7 +38,7 @@
     <!-- 文件 滚动日志 (仅error)-->
     <appender name="errorLog"  class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 当前日志输出路径、文件名 -->
-        <file>${log.path}/error.log</file>
+        <file>${log.path}/error-${HOSTNAME}.log</file>
         <!--日志输出格式-->
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
