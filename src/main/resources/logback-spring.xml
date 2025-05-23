@@ -1,73 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
 
-<configuration>
-    <!--指定property属性变量-->
-    <property name="log.path" value="/data/logs/logdemo"/>
+    <contextName>Logback For demo Mobile</contextName>
 
-    <!-- 日志输出格式
-     %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
-     -->
-    <!-- 控制台 appender-->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+    <!-- 设置log日志存放地址 -->
+    <!--（改） 单环境设置 -->
+
+    <!-- 多环境设置 （如果你需要设置区分 生产环境，测试环境...）-->
+    <!-- 如果需要设置多环境的配置，只设置以下注释内容是不够的，还需要给每个环境设置对应的配置文件如（application-dev.properties）-->
+
+    <property name="LOG_HOME" value="/log/"/>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder默认配置为PartternLayoutEncoder -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %X{RequestId} %-5level %logger{80} -%msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
+        <target>System.out</target>
     </appender>
 
-    <!-- 文件 滚动日志 (all)-->
-    <appender name="allLog"  class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 当前日志输出路径、文件名 -->
-        <file>${log.path}/all-${HOSTNAME}.log</file>
-        <!--日志输出格式-->
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-        <!--历史日志归档策略-->
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- 历史日志： 归档文件名 -->
-            <fileNamePattern>${log.path}/%d{yyyy-MM, aux}/all.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <!--单个文件的最大大小-->
-            <maxFileSize>64MB</maxFileSize>
-            <!--日志文件保留天数-->
-            <maxHistory>15</maxHistory>
-        </rollingPolicy>
-    </appender>
+    <!-- 按照每天生成日志文件 -->
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 
-    <!-- 文件 滚动日志 (仅error)-->
-    <appender name="errorLog"  class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 当前日志输出路径、文件名 -->
-        <file>${log.path}/error-${HOSTNAME}.log</file>
-        <!--日志输出格式-->
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-
-        <!--历史日志归档策略-->
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <!-- 历史日志： 归档文件名 -->
-            <fileNamePattern>${log.path}/%d{yyyy-MM, aux}/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <!--单个文件的最大大小-->
-            <maxFileSize>64MB</maxFileSize>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名-->
+            <FileNamePattern>${LOG_HOME}/manager_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
             <!--日志文件保留天数-->
-            <maxHistory>15</maxHistory>
+            <MaxHistory>5</MaxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
 
-        <!-- 此日志文档只记录error级别的  level过滤器-->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>error</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %X{RequestId} %-5level %logger{25} -%msg%n</pattern>
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
+        </encoder>
     </appender>
 
-    <!-- root 级别的配置 -->
+    <!-- （改）过滤器，可以指定哪些包，哪个记录到等级， -->
+    <!-- 运用的场景比如，你只需要com.demo.controller包下的error日志输出。
+    定义好name="com.demo.controller" level="ERROR" 就行了 -->
+    <logger name="com.mars.dor.businesscore.dao" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- 全局，控制台遇到INFO及以上级别就进行输出 -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="allLog" />
-        <appender-ref ref="errorLog" />
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ROLLING_FILE"/>
     </root>
 
 </configuration>
