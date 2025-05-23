@@ -9,7 +9,7 @@
     <!-- 多环境设置 （如果你需要设置区分 生产环境，测试环境...）-->
     <!-- 如果需要设置多环境的配置，只设置以下注释内容是不够的，还需要给每个环境设置对应的配置文件如（application-dev.properties）-->
 
-    <property name="LOG_HOME" value="/log/"/>
+    <property name="LOG_HOME" value="/log"/>
 
     <!-- 控制台输出 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -26,7 +26,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--日志文件输出的文件名-->
-            <FileNamePattern>${LOG_HOME}/manager_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/manager_%d{yyyy-MM-dd}_${HOSTNAME}.%i.log</FileNamePattern>
             <!--日志文件保留天数-->
             <MaxHistory>5</MaxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
